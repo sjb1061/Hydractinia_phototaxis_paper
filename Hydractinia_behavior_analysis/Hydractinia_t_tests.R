@@ -1,6 +1,10 @@
 #Welch two sample T-tests for hydractinia behavior data 
      #A t-test for two independent samples without an assumption of equal variances
 
+#This script goes through the hydractinia planula larva behavior data where we placed larvae in a petri dish with a light stimulus underneath. 
+#We counted how many larvae were near the stimulus at the begining of the trial and how many larvae werre clustered within 1cm of the light stimulus after the trial. 
+#This script performs the t-test examiming this data and the generation of the behavior figure in the paper. 
+
 #The before numbers are the number of larvae within 1cm of the light before the experiement 
 #The after numbers are the number of larvae within 1cm of the light after the 8hr experiment
 
@@ -52,3 +56,24 @@ r_prop_after <- c(0.078534,0.046875,0.063953)
 t.test(r_prop_before, r_prop_after)
 #data:  r_prop_before and r_prop_after
 #t = -0.46116, df = 3.9368, p-value = 0.669
+
+
+
+##### Make beanplot of larval response #####
+
+install.packages("beanplot")
+library("beanplot")
+
+#set working dir
+setwd("~/Dropbox/R_Work/hydractinia_behavior")
+
+#load data
+dat <- read.csv ("Hydractinia_after_response_data.csv")
+
+# Make beanplot - After creation, open in illustrator and change colors and edit axis names  
+beanplot(dat, main = "Larval Photobehavior", col = c("#1874CD", "#90EE90", "#EE6363"))
+    #Blue N=387, Green N=776, Red N=555; Blue is significant, Green is significant, Red is NS
+
+
+
+
