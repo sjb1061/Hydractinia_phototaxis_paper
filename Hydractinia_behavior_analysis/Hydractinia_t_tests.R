@@ -1,5 +1,5 @@
 #Welch two sample T-tests for hydractinia behavior data 
-          #A t-test for two independent samples without an assumption of equal variances
+     #A t-test for two independent samples without an assumption of equal variances
 
 #The before numbers are the number of larvae within 1cm of the light before the experiement 
 #The after numbers are the number of larvae within 1cm of the light after the 8hr experiment
@@ -29,7 +29,7 @@ t.test(b_before, b_after)
 #data:  b_before and b_after
 #t = -6.1382, df = 5.0803, p-value = 0.001575
 
-#proportions of beforre and after with total number of larvae in experiement: before/tot #larva and after/tot # larva 
+#proportions of before and after with total number of larvae in experiement: before/tot #larva and after/tot # larva 
 b_prop_before <- c(0.060241, 0.024096, 0, 0.031414, 0.010417,0.017442)
 b_prop_after <- c(0.831325,0.73494,0.231884,0.539267,0.244792,0.436047)
 t.test(b_prop_before, b_prop_after)
