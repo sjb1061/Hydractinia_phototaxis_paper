@@ -221,6 +221,40 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
    This script goes through the blastout file that was just created and compares the accid in the blastout file to the accids in the gene_symbol_accid (6.B.3 output) file to identify if there are any duplicates or missing accids. If duplicates are found, you will need to manually go into the blastout file and remove them - keep the accid with the highest similarity (100) - the script will also tell you how many duplicates are found.   
 
 
+### 8. Find Hydractinia planula Transcripts in Shared Orthogroups (OGs) with Sensory Genes (In R environment)
+  Using the two output files (gene_symbols_accid and blastout) from step 7 and the orthofinder results, we will annotate the Orthogroups with the human gene symbols from the gene sets. We will then identify the Hydractinia planula sequences within the orthogroups of sensory genes for each gene set.   
+  
+  This step will take place in R so make sure you have the following files on your desktop:   
+  * **Rscripts *for each gene set:*** *Hs_Sensory_percep_Light_Stim-updated.Rmd*; *Hs_Sensory_sys_dev-updated.Rmd*; *Hs_TF_activity-updated.Rmd*   
+  * **gene_symbol_accid files *for each gene set:*** *gene_symbol_accid_sens_percep_light_stim*; *gene_symbol_accid_sens_sys_dev*; *gene_symbol_accid_total_tf* 
+  * **blastout files *for each gene set:*** *Homo.fa_ref_blastout_sens_percep_light_stim*; *Homo.fa_ref_blastout_sens_sys_dev**; *Homo.fa_ref_blastout_total_tf* 
+  * **Orthofinder tsv file:** Orthogroups_5-11-20.tsv   
+  * **Orthofinder gene count file:** Orthogroups.GeneCount_5-11-20.tsv   
 
+   I have modified portions of an R script made by Sabrina Pankey. **This script has three major parts**, **first** it will read in the orthofinder.tsv file and will re-arrange it so the new dataframe has two columns: seqid and OG (orthogroup) so each row contains 1 seqid with its cooresponding orthogroup number.   
+   
+   **The second part** of this script identifies the human sequences in the gene set by first reading in the blastout file and the gene_symbol_accid file. It then merges the two files/dataframes by using the function inner_join from dplyr to make a file that contains the gene accid from NCBI, the human seqid from our prot fasta, and the cooresponding orthogroup (OG). From there it then adds another column to this dataframe of the gene symbol.   
+   
+   **The third part** of this script identifies the Hydractinia planula sequences from the sensory gene orthogroups found in the previous step. A column of the hydractinia seqids are added to this dataframe of the gene accession, human seqid, OG, and gene symbol, one thing to note is that there can be multiple hydractinia seqids in 1 human sensory gene orthogroup or the opposite of no hydractinia seqids in a human sensory gene orthogroup. The script then modifies the headers of the hydractinia seqid, so after TransDecoder our headers looks like this: Hs_planula_t.124..645-1 which was used in orthofinder. In later steps we will need to have the original header so we can use the gene count data from Salmon which is why after Transdecoder we modified our headers. That modification allows us to get back to the original transcript from where the protien model came from. So here the script removes the position in the sequence the protien model came from: Hs_planula_t.124..**645-1** by splitting on the .. so we now have the identity of the original transcript: Hs_planula_t.124. The script then writes out a file to the directory you are working in of this dataframe.    
+
+   What you need to change in this script (in order):   
+  * Set your working directory
+  * The orthofinder.tsv file name 
+  * The blastout file name
+  * The gene_symbol_accid file name  
+  * The Orthofinder gene count file name
+  * The name and path for your output file 
+  
+   While you are working through this script, I recommend recording key info in a text editor file (one file for each gene set) to make a summary file:  
+  * The name of the gene set with the nuber of genes in the gene set
+  * The number of human gene models from the second part after making the dataframe of gene acc, seqid, OG, and gene symbol 
+  * The number of unique human gene models from the above dataframe
+  * The number of Hydractinia gene models found in all of the orthogroups (from part 3)
+  * The number of unique hydractinia headers
+  * The number of unique Hydractinia OG 
+
+   So in total, you will have 2 key output files:  
+  * A summary file made mannually (you will add on to this file in the next step)  
+  * The automatically generated file from R that contains the last dataframe:  gene_acc, Homo_seqid, OG, gene_symbol, Hydractinia_seqid   
 
 
