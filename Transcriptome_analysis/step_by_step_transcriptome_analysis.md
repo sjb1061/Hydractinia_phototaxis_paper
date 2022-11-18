@@ -118,3 +118,27 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
    From here on, we will be using the reduced prot fasta: *hydractinia_total_ORP_prot-mod_reduced.fa*.  
    
 
+### 5. Run OrthoFinder
+   Now that we have our reduced Hydractinia planula prot models, we can use it with OrthoFinder to identify orthogroups among taxa, for more info on OrthoFinder go here: https://github.com/davidemms/OrthoFinder. For this run, we will use a total of 7 taxa:  
+  * actinula (*E. crocea* larva).  
+  * Hydractinia planula (this transcriptome).   
+  * Hydractinia adult polyp.  
+  * *Nematostella*  
+  * *Hydra*  
+  * *Drosophila*.  
+  * *Homo sapiens*.  
+  
+  ##### Run OrthoFinder slurm:  
+  `sbatch 5_orthofinder.slurm`  
+  
+  The code in the slurm:   
+  `orthofinder.py -f ./fastas/ -t 24 -M msa -S diamond`   
+  
+   The ouput files you need to transfer to your desktop to be used in R in later steps are: 
+  * Orthogroups.tsv (renamed it to: Orthogroups_5-11-20.tsv).  
+  * Orthogroups.GeneCount.tsv (renamed it to: Orthogroups.GeneCount_5-11-20.tsv).  
+
+
+
+
+
