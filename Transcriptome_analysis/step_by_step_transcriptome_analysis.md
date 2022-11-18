@@ -74,3 +74,47 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
    
    Output: You will get directories for each sample - here I secure copied all of my output directories to my desktop and placed them in a folder named mapping. This will be used with EdgeR to find DEGs and when making heatmaps in R towards the end of this workflow. 
    
+   
+### 4. Run TransDecoder 
+   Next we need to translate our assembly into protien space so we can use our assembly in Orthofinder in the next step. We will also have to alter the headers again keeping only valuable information and then we will reduce the assembly by using cd-hit to get rid of duplicates. For more info on transdecoder go here: https://github.com/TransDecoder/TransDecoder/wiki.  
+   
+   ##### First, run Transdecoder:    
+   `sbatch 4.A_transdecoder.slurm`   
+   
+   The code in the slurm is:  
+   `TransDecoder.LongOrfs -t hydractinia_total.ORP.fasta-mod.fa`.    
+   Use the longest_orfs.pep file in the transdecoder dir - copy the file and rename it: hydractinia_total_ORP_prot.fa   
+   
+   ##### Next, rename the headers in the prot fasta:   
+   `./4.B_rename_prot_headers.py -a hydractinia_total_ORP_prot.fa`      
+   
+   The headers after running Transdecoder look like:   
+    >Gene.1::Hs_planula_t.2::g.1::m.1 type:complete len:719 gc:universal Hs_planula_t.2:105-2261(+)  
+    	
+   This script will take the last segment of the transdecoder header (>Gene.1::Hs_planula_t.2::g.1::m.1 type:complete len:719 gc:universal **Hs_planula_t.2:105-2261(+)**) and will remove the direction ((-) or (+)) and the colon to make the new header which would be: >Hs_planula_t.2..105-2261. This header provides the original transcript from which it came (t.#) and also provides where in that sequence it came (#-#). The output file will have the -mod.fa tag at the end of the input fasta file.   
+   
+   The output file is: hydractinia_total_ORP_prot.fa-mod.fa.  
+   
+   ##### Now to get rid of potential duplicates in the assembly, run cd-hit on our protien assembly:   
+   `sbatch 4.C_cdhit.slurm`
+   
+   The code in the slurm:  
+   `cd-hit -i hydractinia_total_ORP_prot.fa-mod.fa -o hydractinia_total_ORP_prot.fa-mod_reduced.fa -c 0.98`  
+   
+   output file: hydractinia_total_ORP_prot.fa-mod_reduced.fa  
+   
+   The number of transcripts: `grep ">" hydractinia_total.ORP.fasta-mod.fa | wc -l`  = **92784 transcripts**.  
+   The number of Protien models: `grep ">" hydractinia_total_ORP_prot.fa-mod.fa | wc -l` = **73297 prot mods**.  
+   
+   The number of Protien models after cd-hit: `grep ">" hydractinia_total_ORP_prot-mod_reduced.fa | wc -l` = **48629 prot mods**.  
+   
+  ##### Side Note: At this point there should now be 5 fasta files:   
+ * The original ORP nuc fasta: *hydractinia_total.ORP.fa*.  
+ * The modified header ORP nuc fasta: *hydractinia_total.ORP.fasta-mod.fa*.  
+ * The original Transdecoder prot fasta: *hydractinia_total_ORP_prot.fa*    
+ * The modified header prot fasta: *hydractinia_total_ORP_prot.fa-mod.fa*.  
+ * The reduced (cd-hit) prot fasta (w/ mod headers): *hydractinia_total_ORP_prot-mod_reduced.fa*.  
+   
+   From here on, we will be using the reduced prot fasta: *hydractinia_total_ORP_prot-mod_reduced.fa*.  
+   
+
