@@ -57,3 +57,20 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
    *****  UNIQUE GENES TRANSABYSS ~~~~~~~~~~>      11098.  
    *****  READS MAPPED AS PROPER PAIRS ~~~~~>      93.87% 	 
 
+### 3. Quantify Reads - Run Salmon
+   Before we quantify our reads, we first need to change the headers in our new assembly. Some of the headers are very long and will be difficult to work with when we run Transdecoder in the next step so it is better to re-format the headers now. 
+   
+   ##### To reformat the headers, Run 3.A_rename_fa_headers.py.   
+   `./3.A_rename_fa_headers.py -a hydractinia_total.ORP.fasta -b Hs_planula`   
+   
+   The second argument here is the base of the new header, this script counts each header in order so the first header will look like: Hs_planula_t.1   
+  
+   The output from this script will be the modified fasta file:  hydractinia_total.ORP.fasta-mod.fa
+     
+   Now that the headers have been reformated, we can use this assembly in Salmon which quantifies reads. Info on salmon can be found here: https://salmon.readthedocs.io/en/latest/salmon.html#using-salmon. The two inputs you will need for this program are the assembly and all of the raw reads. This slurm script (3.B_salmon.slurm) will map each replicate to the assembly (note: you only have to make the index once). 
+   
+   ##### Run the salmon Slurm.  
+   `sbatch 3.B_salmon.slurm`  
+   
+   Output: You will get directories for each sample - here I secure copied all of my output directories to my desktop and placed them in a folder named mapping. This will be used with EdgeR to find DEGs and when making heatmaps in R towards the end of this workflow. 
+   
