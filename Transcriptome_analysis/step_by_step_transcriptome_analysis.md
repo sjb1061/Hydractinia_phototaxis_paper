@@ -258,3 +258,28 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
   * The automatically generated file from R that contains the last dataframe:  gene_acc, Homo_seqid, OG, gene_symbol, Hydractinia_seqid   
 
 
+### 9. Find Significant Differentially Expressed Genes (DEGs) 
+  Ultimately, we want to visualize significant gene expression of hydractinia planula sensory genes across developmental days (the 4 days), which we will do in step 10, but first we need to identify significant DEGs by first running EdgeR in R. We will then export the significant pariwise comparisons for each stage into the terminal. Using this, we will compare the headers from the sensory orthorgroups (the output file from step 8) to the significant DEGs from EdgeR to identify signficant actinula genes in the different gene sets. We will then need to run 2 other scripts to re-organize the output info so we can easily add it into the R script of step 10.     
+
+##### A. Run EdgeR script: 9.A_edgeR_hydractinia_4_groups_0.0001.R
+   To run EdgeR, we first need to make sure we have our salmon output in our current working directory on our desktop. Make sure all salmon data is in a folder called mapping. You will also need to make a file called libraries_to_stages which will have 2 columns of info, the first column will have the names of all the samples and the second will have the developmental day each sample belongs to. 
+  
+  This script has 2 major parts. First, it will read in your salmon data (the quant files) and assign them to their corresponding stages based on the libraries_to_stages file. It will then make a multidimensional scaling (MDS) plot based on count data so you can visualize the similarity of each sample in space.  
+  
+  The second part performs the pairwise comparisons between libraries. For this part you run a function which:   
+ * Uses the calcNormFactors function to normalize library sizes (uses trimmed mean of M-values (TMM) method)
+ * Estimates Dispersion using a quantile-adjusted conditional maximum likelihood (qCML) method using the estimateCommonDisp funciton.  
+ * Examines DEGs at p-value = 0.05 
+ 
+  The Function then generates 4 plots in 1 figure (DGE Exact Test, MDS Plot for Count Data, BCV plot, and Mean-Variance plot) for each comparison. The key output information you need from this analysis to use in the next steps are the files that are generated at each comparison that contain the headers of the significant DEGs with their logFC, logCPM, pvalues, and FDR. 
+  
+  What you need to change in this script (in order):   
+  * Set your working directory
+  * Adjust the number of days accordingly for reading in the data, here we have 4 developmental days 
+  * Adjust the TagwiseDisp n value: 50/(#samples - #groups) (this is in both functions)
+  * The paths and file names for each pairwise comparison   
+   
+  The output that you will need for the next step: 
+ * The output files from each pairwise comparisons - since we have 4 days there will be 6 files generated 
+   
+
