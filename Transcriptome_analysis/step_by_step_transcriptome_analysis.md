@@ -269,7 +269,7 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
   The second part performs the pairwise comparisons between libraries. For this part you run a function which:   
  * Uses the calcNormFactors function to normalize library sizes (uses trimmed mean of M-values (TMM) method)
  * Estimates Dispersion using a quantile-adjusted conditional maximum likelihood (qCML) method using the estimateCommonDisp funciton.  
- * Examines DEGs at p-value = 0.05 
+ * Examines DEGs at p-value = 0.0001 
  
   The Function then generates 4 plots in 1 figure (DGE Exact Test, MDS Plot for Count Data, BCV plot, and Mean-Variance plot) for each comparison. The key output information you need from this analysis to use in the next steps are the files that are generated at each comparison that contain the headers of the significant DEGs with their logFC, logCPM, pvalues, and FDR. 
   
@@ -282,4 +282,22 @@ This file is the step by step instructions of our Transcriptome analysis. You wi
   The output that you will need for the next step: 
  * The output files from each pairwise comparisons - since we have 4 days there will be 6 files generated 
    
+   ##### B. Identify significant DEGs in gene sets (in terminal)  
+  Now that we have all of the significant DEGs between each stage, we can now use this to identify which planula genes are significantly expressed in the gene sets (the genes that share orthogroups with human sensory genes). 
+  
+  In this first part, we are going to run the 9.B_find_sig_degs_in_geneset.py script but first we need to import data and set up our directory in the terminal. I created a new dir called Hydractinia_DEGs within my blastout dir for each of my gene sets from step 7. Import all 6 files of the edgeR output into your dir. I also recommend opening the text summary files that we created in step 8 to add more info. So the 9.B_find_sig_degs_in_geneset.py script takes in 2 files, the output file from step 8 of the headers of interest and one DEG edgeR comparison file. It also takes in the name for the output file. The script will create a dictionary from the step 8 output (since these are the headers that share orthogroups with sensory genes) and then it will compare each header from the edgeR file and will record the edgeR info if there is a matching header. This will then get written to a new file - I recommend copying this info into your summary file. You will have to do this for each edgeR output file (so 6 times) - In the future I want to make it so you only have to run it once (iterate through all the files in the dir using os.walk).   
+  
+  Run 9.B_find_sig_degs_in_geneset.py *__for each comparison file__*:   
+  `./9.B_find_sig_degs_in_geneset.py -a Reduced_Hs_Sensory_Percep_Light_Stim_R_output.txt -b s1vs2_0.0001_4gr -c s1vs2`
+   
+   Output file: s1vs2_red_DEGs.txt (you will have 6 output files which is why I recommend copying all of the output into your summary file).  
+  
+  Now we will prep our significant DEG output to be used in step 10. Copy your summary file and import it into the terminal in this dir. We are going to run 2 prep scripts:  
+ * The first will go through our summary file and will write out a file with all of our significant DEG headers on one line with quotes around each header seperated by a comma. Input your summary file and the name of the gene set for your output file. Copy the output and add it at the bottom of your summary text document.    
+  `./9.C_prep_sig_DEGs_for_heatmap.py -a Summary_DEG_Results_Hs_Sensory_Percep_Light.txt -b sens_percep_light_stim`  
+  
+ * The second prep script will write out a file that has 2 columns, in the first it has the orthogroup and the second has all of the gene symbols associated with that orthogroup, if there are multiple gene symbols it seperates them with a comma. This script requires 2 input arguments: the output file from step 8 with all of the OG of interest and the gene set name for the output file.   
+ `./9.D_get_all_symbols_for_OGs.py -a Reduced_Hs_Sensory_Percep_Light_Stim_R_output.txt -b sens_percep_light_stim`   
+  
+  
 
